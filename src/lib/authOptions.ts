@@ -1,9 +1,17 @@
-import { FcGoogle } from "react-icons/fc";
-import NextAuth, { NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+import NextAuth, { Account, NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
-import { prisma } from "./prisma";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { LOGIN_URL } from "./apiEndPoints";
+import axios from "axios";
+
+export interface CustomUser {
+  id?: string | null;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  token?: string | null;
+  provider?: string | null;
+}
+
 const authOptions: NextAuthConfig = {
   providers: [
     Google({
@@ -15,45 +23,47 @@ const authOptions: NextAuthConfig = {
         },
       },
     }),
-
-    Credentials({
-      name: "Credentials",
-      credentials: {
-        email: { label: "email", type: "text" },
-        password: { label: "password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials.email || !credentials.password) {
-          return null;
-        }
-
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-          },
-        });
-        //TODO: add password check
-
-        return user;
-      },
-    }),
   ],
   callbacks: {
-    async session({ session }) {
+    async signIn({
+      user,
+      account,
+    }: {
+      user: CustomUser;
+      account: Account | null;
+    }) {
+      try {
+        const payload = {
+          email: user.email,
+          name: user.name,
+          oauth_id: account?.providerAccountId,
+          image: user?.image,
+          provider: account?.provider,
+        };
+        const { data } = await axios.post(LOGIN_URL, payload);
+        user.id = data?.user?.id.toString();
+        user.token = data?.user?.token;
+        user.provider = data?.user?.provider;
+
+        return true;
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    },
+    async session({ session, token }) {
+      console.log("session_token", token);
+      if (token.userId) {
+        session.user.id = token.userId as string;
+      }
+      console.log("sessin:", session);
       return session;
     },
-    async jwt({ token, user,account }) {
-      console.log("user:",user);
-      console.log("account:",account);
+    async jwt({ token, user }) {
       if (user) {
-        token.user = user;
+        token.userId = user.id;
       }
+      console.log("token: ", token);
       return token;
     },
   },
@@ -61,7 +71,6 @@ const authOptions: NextAuthConfig = {
     signIn: "/",
     signOut: "/",
   },
-  adapter: PrismaAdapter(prisma),
 };
 
 export const { handlers, signIn, signOut, auth } = NextAuth(authOptions);
