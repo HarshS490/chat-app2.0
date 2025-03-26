@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/features/users/actions/getCurrentUser';
 import React from 'react'
 import DesktopSideBar from './DesktopSideBar';
+import MobileFooter from './MobileFooter';
 
 type Props = {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ async function Sidebar({children}: Props) {
   return (
     <div className='h-full'>
       <DesktopSideBar currentuser={currentuser}/>
+      <MobileFooter/>
       {children}
     </div>
   )
