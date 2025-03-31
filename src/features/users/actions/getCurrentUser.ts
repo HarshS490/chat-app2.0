@@ -4,11 +4,14 @@ import { SessionUser } from "../schema";
 
 export const getCurrentUser = async ()=>{
   try {
-    const {user} = await auth();
-    console.log("current user : ",user);
+    const session = await auth();
+    if(!session){
+      return null;
+    }
+    const {user} = session;
     return user as SessionUser;
   } catch (error) {
-    return null;
     console.log(error);
+    return null;
   }
 }
