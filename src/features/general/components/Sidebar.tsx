@@ -14,7 +14,11 @@ async function Sidebar({children}: Props) {
     <div className='h-full'>
       <DesktopSideBar currentuser={currentuser}/>
       <MobileFooter/>
-      {children}
+      <main className='lg:pl-20 h-full'>
+      {
+        children
+      }
+      </main>
     </div>
   )
 }
