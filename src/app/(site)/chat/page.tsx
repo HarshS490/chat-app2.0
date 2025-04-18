@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-async function page({}: Props) {
+async function page() {
   
 
 

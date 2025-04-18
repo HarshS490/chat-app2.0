@@ -11,7 +11,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import FriendRequests from "@/features/users/components/friend-requests";
-import { X } from "lucide-react";
 
 type Props = {
   route: route;

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { CompleteConversation } from "../schema";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import ConversationBox from "./conversation-box";
@@ -11,7 +11,6 @@ type Props = {
 };
 
 function ConversationList({ initialItems }: Props) {
-  const [items, setItems] = useState(initialItems);
   const { conversationId, isOpen } = useConversation();
   return (
     <aside
@@ -34,7 +33,7 @@ function ConversationList({ initialItems }: Props) {
           </div>
         </div>
 
-        {items.map((item) => (
+        {initialItems.map((item) => (
           <ConversationBox
             key={item.conversationId}
             data={item}
