@@ -1,4 +1,4 @@
-// import UsersList from "@/features/users/components/user-list";
+export const dynamic = 'force-dynamic';
 import React from "react";
 
 async function page() {
