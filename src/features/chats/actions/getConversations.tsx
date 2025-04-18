@@ -1,6 +1,6 @@
 import { API_URL } from "@/lib/apiEndPoints"
 import axios from "axios"
-import { PartialConversation } from "../schema";
+import { CompleteConversation } from "../schema";
 import { auth } from "@/lib/authOptions";
 
 const getConversations = async ()=>{
@@ -12,7 +12,7 @@ const getConversations = async ()=>{
         "Authorization" : token,
       } 
     });
-    const conversations: PartialConversation[] = response.data.conversations;
+    const conversations: CompleteConversation[] = response.data.conversations;
     // console.log(conversations);
     return conversations;
   } catch (error) {
