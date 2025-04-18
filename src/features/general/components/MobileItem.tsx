@@ -2,6 +2,7 @@ import React from "react";
 import { route } from "../hooks/useRoutes";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { NotificationDrawer } from "./CustomDrawer";
 
 type Props = {
   route: route;
@@ -14,6 +15,10 @@ function MobileItem({ route }: Props) {
       return route.onClick();
     }
   };
+
+  if (route.label === "Notifications") {
+    return <NotificationDrawer route={route} direction="bottom" />;
+  }
   return (
     <Link
       href={route.href}

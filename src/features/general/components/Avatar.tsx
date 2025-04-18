@@ -8,10 +8,8 @@ type Props = {
 };
 
 function CustomAvatar({ image, isGroup }: Props) {
-  console.log(image);
-  console.log(isGroup);
   return (
-    <Avatar>
+    <Avatar className="cursor-pointer">
       <AvatarImage
         src={
           image || (isGroup?"/groupPlaceholder.png":"/userplaceholder.jpg")

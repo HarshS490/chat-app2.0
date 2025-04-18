@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 
 import { signOut } from "next-auth/react";
 
-import { LucideProps, MessageCircle, SquareArrowLeft, UsersRound } from "lucide-react";
+import { LucideProps, MessageCircle, SquareArrowLeft, UsersRound,Bell } from "lucide-react";
 
 export interface route {
   label: string;
@@ -14,21 +14,28 @@ export interface route {
 };
 
 
+
 const useRoutes = () => {
   const pathname = usePathname();
+  const activeRoute = useMemo(()=>(pathname.split('/')[1]),[pathname]);
   const routes= useMemo<route[]>(
     () => [
       {
         label: "Chat",
         href: "/chat",
         icon: MessageCircle,
-        active: pathname === "/chat",
+        active: activeRoute === "chat",
       },
       {
         label: "users",
         href: "/users",
         icon: UsersRound,
-        active: pathname === "/users",
+        active: activeRoute === "users",
+      },
+      {
+        label:"Notifications",
+        href:"#",
+        icon: Bell,
       },
       {
         label: "Logout",
@@ -36,8 +43,9 @@ const useRoutes = () => {
         onClick: signOut,
         icon: SquareArrowLeft,
       },
+      
     ],
-    [pathname]
+    [activeRoute]
   );
   return routes;
 };
