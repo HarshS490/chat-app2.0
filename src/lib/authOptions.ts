@@ -50,7 +50,7 @@ const authOptions: NextAuthConfig = {
         user.id = data?.user?.id.toString();
         user.token = data?.user?.token;
         user.provider = data?.user?.provider;
-
+        user.color = data?.user?.color;
         // console.log("Sign In User: ",user);
         return true;
       } catch (error) {

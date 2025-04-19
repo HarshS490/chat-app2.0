@@ -1,5 +1,6 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar} from "@/components/ui/avatar";
+import Image from "next/image";
 import React from "react";
 
 type Props = {
@@ -10,12 +11,14 @@ type Props = {
 function CustomAvatar({ image, isGroup }: Props) {
   return (
     <Avatar className="cursor-pointer">
-      <AvatarImage
+      <Image
         src={
           image || (isGroup?"/groupPlaceholder.png":"/userplaceholder.jpg")
         }
-      ></AvatarImage>
-      <AvatarFallback>{isGroup ? "G" : "U"}</AvatarFallback>
+        alt="profilePic"
+        width={32}
+        height={32}
+      ></Image>
     </Avatar>
   );
 }

@@ -32,19 +32,21 @@ function MessageInput({ chatId }: Props) {
     resolver: zodResolver(messageSchema),
   });
 
-  const { sendMessage } = useChat<SendMessageType>({ chatId });
+  const { sendMessage } = useChat<SocketMessageType>({ chatId });
 
   const session = useSession();
   const onSubmit = useCallback(
     (data: MessageSchemaType) => {
       if (data.body.trim().length == 0) return;
-      if (!session.data?.user.id || !session.data.user.name) return;
+      const user = session.data?.user;
+      if (!user || !user.id || !user.name || !user.email || !user.image) return;
+
       const payload: SendMessageType = {
         body: data.body,
         file: data.file,
         chatId: chatId,
-        createdBy: session.data?.user.id,
-        name: session.data.user.name,
+        createdBy: user.id,
+        name: user.name,
       };
 
       if (payload.file) {
@@ -54,15 +56,22 @@ function MessageInput({ chatId }: Props) {
           body: data.body,
           image: null,
           chatId: chatId,
-          createdBy: session.data.user.id,
-          name: session.data.user.name,
+          createdBy: {
+            email: user.email,
+            id: user.id,
+            image: user.image,
+            name: user.name,
+          },
+          public_id: null,
+          isEdited: false,
           createdAt: new Date(),
+          updatedAt: new Date(),
         };
         sendMessage(message);
       }
       reset();
     },
-    [session.data?.user.id, chatId, reset, sendMessage, session.data?.user.name]
+    [chatId, reset, sendMessage, session.data?.user]
   );
 
   return (

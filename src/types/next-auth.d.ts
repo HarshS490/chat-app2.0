@@ -15,6 +15,7 @@ declare module "next-auth"{
     image:string;
     token:string;
     provider:string;
+    color:string|null;
   }
 };
 

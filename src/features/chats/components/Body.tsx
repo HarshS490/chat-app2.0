@@ -10,9 +10,9 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchMessages } from "../actions/getMessages";
 import { useSession } from "next-auth/react";
 import useChat from "@/features/general/hooks/use-chat";
-import { SocketMessageType } from "../schema";
+import { FullMessageType, SocketMessageType } from "../schema";
 import { v4 as uuidv4 } from "uuid";
-import { MessageBox, SocketMessageBox } from "./MessageBox";
+import { MessageBox } from "./MessageBox";
 import { Loader2Icon } from "lucide-react";
 
 type Props = {
@@ -42,8 +42,41 @@ function Body({ chatId }: Props) {
 
   const allMessages = useMemo(() => {
     if (!data?.pages) return [];
-    return [...data.pages].reverse().flatMap((page) => page.messages);
+    const messages = [...data.pages].reverse().flatMap((page) => page.messages);
+    const batches: FullMessageType[][] = [];
+    let batch: FullMessageType[] = [];
+    for (let i = 0; i < messages.length; i++) {
+      if (
+        batch.length === 0 ||
+        messages[i].createdBy.id === batch[0].createdBy.id
+      ) {
+        batch.push(messages[i]);
+      } else {
+        batches.push(batch);
+        batch = [];
+        batch.push(messages[i]);
+      }
+    }
+    return batches;
   }, [data?.pages]);
+
+  const batchWiseSocketMessages = useMemo(() => {
+    const batches: SocketMessageType[][] = [];
+    let batch: SocketMessageType[] = [];
+    for (let i = 0; i < newMessages.length; i++) {
+      if (
+        batch.length == 0 ||
+        newMessages[i].createdBy.id === batch[0].createdBy.id
+      ) {
+        batch.push(newMessages[i]);
+      } else {
+        batches.push(batch);
+        batch = [];
+        batch.push(newMessages[i]);
+      }
+    }
+    return batches;
+  }, [newMessages]);
 
   useEffect(() => {
     if (data?.pages.length === 1 && bottomRef.current) {
@@ -113,38 +146,48 @@ function Body({ chatId }: Props) {
   useChat({ chatId, recieveMessages });
 
   return (
-      <div
-        ref={containerRef}
-        className=" flex-1 p-2 overflow-y-auto w-full items-end"
-      >
-        <div ref={topRef}></div>
-        {isFetchingNextPage && (
-          <div className="w-full flex  justify-center">
-            <Loader2Icon className="animate-spin" />
-          </div>
-        )}
-        {allMessages.map((msg) => {
+    <div
+      ref={containerRef}
+      className=" flex-1 p-2 overflow-y-auto w-full items-end"
+    >
+      <div ref={topRef}></div>
+      {isFetchingNextPage && (
+        <div className="w-full flex  justify-center">
+          <Loader2Icon className="animate-spin" />
+        </div>
+      )}
+      {allMessages.map((batch) => {
+        console.log(batch.length);
+        return batch.map((msg, ind) => {
           return (
             <MessageBox
               key={msg.id}
               data={msg}
-              isOwn={session.data?.user.id === msg.userId}
+              isOwn={session.data?.user.id === msg.createdBy.id}
+              isLast={batch.length - 1 === ind}
+              isFirst={ind==0}
             />
           );
-        })}
+        });
+      })}
 
-        {newMessages.map((msg) => {
+      {batchWiseSocketMessages.map((batch) => {
+        return batch.map((msg, ind) => {
           const uid = uuidv4();
           return (
-            <SocketMessageBox
+            <MessageBox
               key={uid}
               data={msg}
-              isOwn={session.data?.user.id === msg.createdBy}
+              isOwn={session.data?.user.id === msg.createdBy.id}
+              isLast={ind === batch.length - 1}
+              isFirst={ind==0}
+
             />
           );
-        })}
-        <div ref={bottomRef}></div>
-      </div>
+        });
+      })}
+      <div ref={bottomRef}></div>
+    </div>
   );
 }
 
