@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import useOtherUser from "../hooks/useOtherUser";
 import CustomAvatar from "@/features/general/components/Avatar";
 import clsx from "clsx";
+import {  differenceInCalendarDays, format } from "date-fns";
 
 type Props = {
   data: CompleteConversation;
@@ -34,6 +35,18 @@ function ConversationBox({ data, selected }: Props) {
 
     return "Started a conversation";
   }, [lastMessage]);
+
+  const time = useMemo(()=>{
+    const currentDate = new Date();
+    if(differenceInCalendarDays(data.conversation.lastMessageAt,currentDate) == 0){
+      // return time format
+      return format(data.conversation.lastMessageAt,"HH:mm");
+    }
+    // return date format
+    console.log(data.conversation.lastMessageAt);
+    return format(data.conversation.lastMessageAt,"dd/MM/yy")
+  },[data.conversation.lastMessageAt]);
+
   return (
     <div
       onClick={handleClick}
@@ -65,7 +78,7 @@ function ConversationBox({ data, selected }: Props) {
                 {lastMessageText}
               </p>
               {lastMessage?.createdAt && (
-                <span className="text-xs block shrink-0">{"time"}</span>
+                <span className="text-xs block shrink-0">{time}</span>
               )}
             </div>
           </div>
