@@ -1,5 +1,5 @@
 "use client";
-import useChat from "@/features/general/hooks/use-chat";
+import { useSocket } from "@/features/general/hooks/SocketProvider";
 import { SendHorizontalIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React, { useCallback } from "react";
@@ -32,7 +32,7 @@ function MessageInput({ chatId }: Props) {
     resolver: zodResolver(messageSchema),
   });
 
-  const { sendMessage } = useChat<SocketMessageType>({ chatId });
+  const {sendMessage} = useSocket();
 
   const session = useSession();
   const onSubmit = useCallback(
@@ -48,7 +48,6 @@ function MessageInput({ chatId }: Props) {
         createdBy: user.id,
         name: user.name,
       };
-
       if (payload.file) {
         // upload the file to cloudiary then send upon socket.
       } else {
@@ -61,6 +60,7 @@ function MessageInput({ chatId }: Props) {
             id: user.id,
             image: user.image,
             name: user.name,
+            color: user.color,
           },
           public_id: null,
           isEdited: false,
@@ -84,6 +84,7 @@ function MessageInput({ chatId }: Props) {
           <input
             className="font-light py-2 px-4 bg-gray-200/85 text-black w-full rounded-full focus:outline-none "
             id="message"
+            aria-autocomplete="none"
             placeholder="Message..."
             {...register("body")}
           />

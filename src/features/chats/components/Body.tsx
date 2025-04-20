@@ -9,11 +9,12 @@ import React, {
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchMessages } from "../actions/getMessages";
 import { useSession } from "next-auth/react";
-import useChat from "@/features/general/hooks/use-chat";
 import { FullMessageType, SocketMessageType } from "../schema";
 import { v4 as uuidv4 } from "uuid";
 import { MessageBox } from "./MessageBox";
 import { Loader2Icon } from "lucide-react";
+import { useSocket } from "@/features/general/hooks/SocketProvider";
+import ChatEmptyState from "./ChatEmptyState";
 
 type Props = {
   chatId: string;
@@ -27,7 +28,8 @@ function Body({ chatId }: Props) {
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  // Message Fetching and Processing
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: queryKey,
       queryFn: ({ pageParam = "" }) => fetchMessages({ pageParam, chatId }),
@@ -38,6 +40,7 @@ function Body({ chatId }: Props) {
       refetchOnMount: true,
       refetchOnReconnect: true,
       initialPageParam: "",
+      retry: 3,
     });
 
   const allMessages = useMemo(() => {
@@ -57,6 +60,7 @@ function Body({ chatId }: Props) {
         batch.push(messages[i]);
       }
     }
+    if (batch.length !== 0) batches.push(batch);
     return batches;
   }, [data?.pages]);
 
@@ -71,19 +75,15 @@ function Body({ chatId }: Props) {
         batch.push(newMessages[i]);
       } else {
         batches.push(batch);
-        batch = [];
-        batch.push(newMessages[i]);
+        batch = [newMessages[i]];
       }
     }
+    if (batch.length !== 0) batches.push(batch);
+    console.log(batches);
     return batches;
   }, [newMessages]);
 
-  useEffect(() => {
-    if (data?.pages.length === 1 && bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "auto" });
-    }
-  }, [data?.pages.length]);
-
+  // Scroll Controllers
   const checkIfNearBottom = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -92,6 +92,12 @@ function Body({ chatId }: Props) {
     const height = container.scrollHeight;
     return height - position <= threshold;
   }, []);
+
+  useEffect(() => {
+    if (data?.pages.length === 1 && bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "auto" });
+    }
+  }, [data?.pages.length]);
 
   useEffect(() => {
     if (newMessages.length === 0) return;
@@ -139,17 +145,24 @@ function Body({ chatId }: Props) {
     data?.pages.length,
   ]);
 
+  // Socket setup and Messages.
+  const { joinRoom, setMessageHandler } = useSocket();
   const recieveMessages = useCallback((data: SocketMessageType) => {
+    console.log("setting new messages");
     setNewMessages((prev) => [...prev, data]);
   }, []);
 
-  useChat({ chatId, recieveMessages });
+  useEffect(() => {
+    console.log("new message updated");
+  }, [newMessages]);
+
+  useEffect(() => {
+    joinRoom(chatId);
+    setMessageHandler(recieveMessages);
+  }, [chatId, joinRoom, setMessageHandler, recieveMessages]);
 
   return (
-    <div
-      ref={containerRef}
-      className=" flex-1 p-2 overflow-y-auto w-full items-end"
-    >
+    <div ref={containerRef} className=" flex-1 p-2 overflow-y-auto w-full ">
       <div ref={topRef}></div>
       {isFetchingNextPage && (
         <div className="w-full flex  justify-center">
@@ -165,7 +178,7 @@ function Body({ chatId }: Props) {
               data={msg}
               isOwn={session.data?.user.id === msg.createdBy.id}
               isLast={batch.length - 1 === ind}
-              isFirst={ind==0}
+              isFirst={ind == 0}
             />
           );
         });
@@ -180,12 +193,15 @@ function Body({ chatId }: Props) {
               data={msg}
               isOwn={session.data?.user.id === msg.createdBy.id}
               isLast={ind === batch.length - 1}
-              isFirst={ind==0}
-
+              isFirst={ind == 0}
             />
           );
         });
       })}
+
+      {!isFetching &&
+        batchWiseSocketMessages.length === 0 &&
+        allMessages.length === 0 && <ChatEmptyState />}
       <div ref={bottomRef}></div>
     </div>
   );

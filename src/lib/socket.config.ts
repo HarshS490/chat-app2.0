@@ -8,6 +8,8 @@ export enum Events {
   CONNECT = "CONNECT",
   DISCONNECT = "disconnect",
   ERROR = "ERROR",
+  JOIN="JOIN",
+  LEAVE="LEAVE",
 }
 
 
