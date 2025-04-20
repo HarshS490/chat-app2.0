@@ -79,7 +79,6 @@ function Body({ chatId }: Props) {
       }
     }
     if (batch.length !== 0) batches.push(batch);
-    console.log(batches);
     return batches;
   }, [newMessages]);
 
@@ -148,12 +147,10 @@ function Body({ chatId }: Props) {
   // Socket setup and Messages.
   const { joinRoom, setMessageHandler } = useSocket();
   const recieveMessages = useCallback((data: SocketMessageType) => {
-    console.log("setting new messages");
     setNewMessages((prev) => [...prev, data]);
   }, []);
 
   useEffect(() => {
-    console.log("new message updated");
   }, [newMessages]);
 
   useEffect(() => {
@@ -170,7 +167,6 @@ function Body({ chatId }: Props) {
         </div>
       )}
       {allMessages.map((batch) => {
-        console.log(batch.length);
         return batch.map((msg, ind) => {
           return (
             <MessageBox

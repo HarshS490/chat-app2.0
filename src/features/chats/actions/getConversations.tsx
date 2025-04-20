@@ -14,7 +14,6 @@ const getConversations = async ()=>{
       } 
     });
     const conversations: CompleteConversation[] = response.data.conversations;
-    // console.log(conversations);
     return conversations;
   } catch (error) {
     console.log(error);

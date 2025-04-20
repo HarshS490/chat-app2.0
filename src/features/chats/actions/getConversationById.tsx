@@ -8,7 +8,6 @@ const getConversationById = async (chatId: string) => {
     const session = await auth();
 
     const token = session?.backendToken;
-    console.log(chatId);
     const response = await axios.post(
       `${API_URL}/chat/id`,
       { chatId },
@@ -20,7 +19,6 @@ const getConversationById = async (chatId: string) => {
       }
     );
     const conversation: PartialConversation | null = response.data.conversation;
-    console.log("getConversations by ID : ", conversation);
     return conversation;
   } catch (error) {
     console.log(error);

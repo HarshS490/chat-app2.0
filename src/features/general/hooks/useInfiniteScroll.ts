@@ -48,7 +48,6 @@ export function useInfiniteScroll<TQueryFnData, TError, TData>({
       (enteries) => {
         const latest = enteries[enteries.length - 1];
         if (latest.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          console.log("Fetching new data");
           fetchNextPage();
         }
       },

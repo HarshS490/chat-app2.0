@@ -39,7 +39,6 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
   //Methods 
   const setMessageHandler = useCallback(
     (handler: (data: SocketMessageType) => void) => {
-      console.log("message handler set");
       messageHandlerRef.current = handler;
     },
     []
@@ -86,7 +85,6 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
   const onMessageRecieve = useCallback(
     (data: SocketMessageType) => {
-      console.log(" Recieving message");
       messageHandlerRef.current(data);
       updateConversations(data);
     },
@@ -99,7 +97,6 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
   const joinRoom = useCallback((room: string) => {
     if (!currentRoomRef.current.has(room)) {
       socket.emit(Events.JOIN, { room }, () => {
-        console.log(`Successfully joined room: ${room}`);
         currentRoomRef.current.add(room);
       });
     }
@@ -110,7 +107,6 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
       if (currentRoomRef.current.has(room)) {
         socket.emit(Events.LEAVE, {room});
         currentRoomRef.current.delete(room);
-        console.log(`Left Room : ${room}`);
       }
     },
     [socket, currentRoomRef]
@@ -119,7 +115,6 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
   const sendMessage = useCallback(
     (data: SocketMessageType) => {
       if (!socket.connected) {
-        console.log("socke not connected");
         return;
       }
       socket.emit(Events.MESSAGE, {message:{ ...data, timeStamp: Date.now() }, room: data.chatId});
@@ -133,12 +128,10 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
     }
 
     // setting up handlers.
-    console.log("setting up handlers");
     socket.on(Events.MESSAGE, onMessageRecieve);
 
     return () => {
       //remove handlers
-      console.log("closing connections")
       socket.off(Events.MESSAGE, onMessageRecieve);
       socket.disconnect();
       

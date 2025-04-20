@@ -11,7 +11,6 @@ type chatProps = {
 
 async function chatroom({ params }: chatProps) {
   const chatId = (await params).id;
-  console.log(chatId);
   const conversation: PartialConversation | null = await getConversationById(
     chatId
   );

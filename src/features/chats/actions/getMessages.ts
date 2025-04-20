@@ -15,7 +15,6 @@ export const fetchMessages = async ({
   chatId: string;
 }) => {
   try {
-    console.log("getting messages");
     const session = await auth();
     const token = session?.backendToken;
     const queryParams = {
@@ -32,7 +31,6 @@ export const fetchMessages = async ({
         "Authorization":token,
       }
     });
-    console.log(response.data.messages);
     const messages = response.data.messages as FullMessageType[];
     if(messages.length==0){
       return {

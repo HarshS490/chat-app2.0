@@ -46,14 +46,12 @@ const authOptions: NextAuthConfig = {
           image: user?.image,
           provider: account?.provider,
         };
-        console.log("SignIN payload: ",payload);
         const { data } = await axios.post(LOGIN_URL, payload);
         
         user.id = data?.user?.id.toString();
         user.token = data?.user?.token;
         user.provider = data?.user?.provider;
         user.color = data?.user?.color;
-        // console.log("Sign In User: ",user);
         return true;
       } catch (error) {
         console.log(error);
@@ -69,8 +67,6 @@ const authOptions: NextAuthConfig = {
         token.userId = user.id;
         token.backendToken = user.token;
       }
-      // console.log("JWT TOKEN : ",token);
-      // console.log("JWT USER :",user );
       return token;
     },
     async session({ session, token }) {
@@ -78,8 +74,6 @@ const authOptions: NextAuthConfig = {
         session.user.id = token.userId as string;
         session.backendToken = token.backendToken;
       }
-      // console.log("Session:", session);
-      // console.log("Session_token : ",token);
       return session;
     },
   },

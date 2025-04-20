@@ -43,7 +43,6 @@ function ConversationBox({ data, selected }: Props) {
       return format(data.conversation.lastMessageAt,"HH:mm");
     }
     // return date format
-    console.log(data.conversation.lastMessageAt);
     return format(data.conversation.lastMessageAt,"dd/MM/yy")
   },[data.conversation.lastMessageAt]);
 
