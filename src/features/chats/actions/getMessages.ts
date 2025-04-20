@@ -34,7 +34,13 @@ export const fetchMessages = async ({
     });
     console.log(response.data.messages);
     const messages = response.data.messages as FullMessageType[];
-
+    if(messages.length==0){
+      return {
+        messages:messages,
+        currentPage: pageParam,
+        nextPage: null,
+      }
+    }
     const cursor = messages[0].id;
     return {
       messages:messages,
