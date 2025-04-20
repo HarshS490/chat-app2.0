@@ -19,6 +19,9 @@ async function chatroom({ params }: chatProps) {
   if (!conversation) {
     return <div className="lg:pl-80 h-full"></div>;
   }
+
+  
+
   return (
     <div className=" lg:pl-80 h-full">
       <div className="h-full flex flex-col py-2 gap-2 ">

@@ -1,3 +1,4 @@
+"use server";
 import { API_URL } from "@/lib/apiEndPoints"
 import axios from "axios"
 import { CompleteConversation } from "../schema";

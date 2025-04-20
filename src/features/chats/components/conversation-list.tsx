@@ -1,17 +1,23 @@
 "use client";
 import React from "react";
-import { CompleteConversation } from "../schema";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import ConversationBox from "./conversation-box";
 import { useConversation } from "../hooks/useConversation";
 import clsx from "clsx";
+import { useQuery } from "@tanstack/react-query";
+import { getConversations } from "../actions/getConversations";
+import Loading from "./Loading";
 
-type Props = {
-  initialItems: CompleteConversation[];
-};
 
-function ConversationList({ initialItems }: Props) {
+function ConversationList() {
   const { conversationId, isOpen } = useConversation();
+
+  const {data,isFetching} = useQuery({
+    queryKey:["Conversations"],
+    queryFn: getConversations,
+    refetchOnWindowFocus:false,
+  });
+
   return (
     <aside
       className={clsx(
@@ -33,13 +39,16 @@ function ConversationList({ initialItems }: Props) {
           </div>
         </div>
 
-        {initialItems.map((item) => (
+        {data && data.map((item) => (
           <ConversationBox
             key={item.conversationId}
             data={item}
             selected={conversationId === item.conversationId}
           />
         ))}
+        {
+          isFetching && <Loading></Loading>
+        }
       </div>
     </aside>
   );
