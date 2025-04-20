@@ -1,5 +1,6 @@
 import NextAuth, { Account,  NextAuthConfig, User } from "next-auth";
 import Google from "next-auth/providers/google";
+import GitHub from "next-auth/providers/github"
 import { LOGIN_URL } from "./apiEndPoints";
 import axios from "axios";
 
@@ -23,6 +24,7 @@ const authOptions: NextAuthConfig = {
         },
       },
     }),
+    GitHub,
   ],
   callbacks: {
     async signIn({
