@@ -15,7 +15,7 @@ export function MessageBox({
   isLast: boolean;
   isFirst: boolean;
 }) {
-  const container = clsx("flex gap-1 p-1 w-full items-center", {
+  const container = clsx("flex gap-1 p-1 w-full items-end", {
     "justify-end": isOwn,
   });
   const body = clsx("flex flex-col gap-2 max-w-1/2  ", {
@@ -26,7 +26,7 @@ export function MessageBox({
   const message = clsx(
     "text-sm w-fit overflow-hidden relative flex flex-col",
     {
-      "bg-[#0F54AE] text-white rounded-l-2xl": isOwn,
+      "bg-blue-600/80 text-white rounded-l-2xl": isOwn,
       "rounded-r-2xl bg-gray-100 ": !isOwn,
       "rounded-r-2xl": isOwn && !isLast,
       "rounded-tr-2xl": isOwn && isLast,
@@ -41,11 +41,12 @@ export function MessageBox({
   const time = clsx(
     "text-xs text-gray-500  justify-self-end  self-end flex-0 "
   );
- 
+
   const usernameClasses = clsx("text-xs font-semibold", {
-    "self-end": isOwn,
+    "self-end ": isOwn,
     "self-start": !isOwn,
   });
+
   return (
     <div className={container}>
       {!isOwn && isLast && (
@@ -53,19 +54,17 @@ export function MessageBox({
       )}
 
       <div className={body}>
+        {isFirst && (
+          <p className={usernameClasses}>
+            {data.createdBy.name}
+          </p>
+        )}
         <div
           className={clsx(
             isOwn ? "flex flex-row-reverse gap-2 " : "flex gap-2 "
           )}
         >
           <div className={message}>
-            {isFirst && (
-              <p
-                className={usernameClasses}
-              >
-                {data.createdBy.name}
-              </p>
-            )}
             <p>{data.body}&nbsp;</p>
           </div>
           <p className={time}>{format(new Date(data.createdAt), "HH:mm")}</p>

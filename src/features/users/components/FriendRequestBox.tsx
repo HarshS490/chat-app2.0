@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FullFriendRequest } from "../schema";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
@@ -20,7 +20,7 @@ function FriendRequestBox({ request }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const session = useSession();
   const router = useRouter();
-
+  const currentUser = useMemo(() => session.data?.user, [session.data?.user]);
   const acceptRequest = useCallback(() => {
     setIsLoading(true);
     axios
@@ -37,7 +37,7 @@ function FriendRequestBox({ request }: Props) {
         }
       )
       .then((response) => {
-        router.push(`/chat/${response.data.id}`);
+        router.push(`/chat/${response.data.newConversation.id}`);
         toast.success("Friend Request accepted!", {
           id: "FRIEND_REQUEST",
         });
@@ -73,7 +73,11 @@ function FriendRequestBox({ request }: Props) {
 
   return (
     <div className="flex w-full gap-2 items-center justify-center   border-gray-200 rounded-xl hover:bg-gray-200 p-2">
-      <CustomAvatar image={request.sender.image} isGroup={false} />
+      {request.sender.id === currentUser?.id ? (
+        <CustomAvatar image={request.receiver.image} isGroup={false} />
+      ) : (
+        <CustomAvatar image={request.sender.image} isGroup={false} />
+      )}
       <div className="flex justify-between gap-4 grow items-center">
         <div>
           <h2 className="font-semibold text-lg">{request.sender.name}</h2>
@@ -83,7 +87,8 @@ function FriendRequestBox({ request }: Props) {
           <div>
             <Loading />
           </div>
-        ) : request.status === "pending" ? (
+        ) : request.status === "pending" &&
+          request.receiverId === currentUser?.id ? (
           <div className="flex items-center gap-3">
             <Button
               type="button"
@@ -108,7 +113,7 @@ function FriendRequestBox({ request }: Props) {
           <p
             className={clsx({
               "text-blue-500 text-sm": request.status === "accepted",
-              "text-red-500 text-sm": request.status === "declined",
+              "text-gray-500 text-sm": request.status === "pending",
             })}
           >
             {request.status}
