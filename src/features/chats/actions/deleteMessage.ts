@@ -25,7 +25,6 @@ const deleteMessage = async (data: SocketMessageType | FullMessageType) => {
           'Authorization': token,
         }
       });
-      console.log(response);
       const message = response.data.message as string;
       return message;
     }
