@@ -4,10 +4,10 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-
+  console.log("Running Middleware");
   const isAuth = !!token;
   const isAuthPage = req.nextUrl.pathname.startsWith("/auth");
-
+  console.log("User authenticated: ",isAuth);
   if (!isAuth && !isAuthPage) {
     return NextResponse.redirect(new URL("/auth", req.url));
   }
