@@ -46,14 +46,16 @@ export const fetchMessages = async ({
       nextPage: PAGE_SIZE>messages.length ? null: cursor,
     }
   } catch (error) {
-    console.log(error);
     if(error instanceof AxiosError){
       throw new Error(error.message);
     }
-    return {
-      messages: [],
-      currentPage:pageParam,
-      nextPage: pageParam,
-    };
+    else{
+      throw new Error("Unexpected Error Occured");
+    }
+    // return {
+    //   messages: [],
+    //   currentPage:pageParam,
+    //   nextPage: pageParam,
+    // };
   }
 };

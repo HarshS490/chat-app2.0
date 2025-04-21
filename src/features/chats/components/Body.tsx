@@ -16,6 +16,7 @@ import { Loader2Icon } from "lucide-react";
 import { useSocket } from "@/features/general/hooks/SocketProvider";
 import ChatEmptyState from "./ChatEmptyState";
 
+
 type Props = {
   chatId: string;
 };
@@ -150,8 +151,7 @@ function Body({ chatId }: Props) {
     setNewMessages((prev) => [...prev, data]);
   }, []);
 
-  useEffect(() => {
-  }, [newMessages]);
+  useEffect(() => {}, [newMessages]);
 
   useEffect(() => {
     joinRoom(chatId);
@@ -161,8 +161,8 @@ function Body({ chatId }: Props) {
   return (
     <div ref={containerRef} className=" flex-1 p-2 overflow-y-auto w-full ">
       <div ref={topRef}></div>
-      {isFetchingNextPage && (
-        <div className="w-full flex  justify-center">
+      {isFetchingNextPage && hasNextPage && !isFetching && (
+        <div className="w-full flex justify-center">
           <Loader2Icon className="animate-spin" />
         </div>
       )}
@@ -196,8 +196,8 @@ function Body({ chatId }: Props) {
       })}
 
       {!isFetching &&
-        batchWiseSocketMessages.length === 0 &&
-        allMessages.length === 0 && <ChatEmptyState />}
+        !batchWiseSocketMessages.length &&
+        !allMessages.length && <ChatEmptyState />}
       <div ref={bottomRef}></div>
     </div>
   );

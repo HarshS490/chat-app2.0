@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { format } from "date-fns";
 import CustomAvatar from "@/features/general/components/Avatar";
 
-export function MessageBox({
+export const MessageBox = React.memo(function MessageBox({
   data,
   isOwn,
   isLast,
@@ -54,11 +54,7 @@ export function MessageBox({
       )}
 
       <div className={body}>
-        {isFirst && (
-          <p className={usernameClasses}>
-            {data.createdBy.name}
-          </p>
-        )}
+        {isFirst && <p className={usernameClasses}>{data.createdBy.name}</p>}
         <div
           className={clsx(
             isOwn ? "flex flex-row-reverse gap-2 " : "flex gap-2 "
@@ -75,4 +71,4 @@ export function MessageBox({
       )}
     </div>
   );
-}
+});

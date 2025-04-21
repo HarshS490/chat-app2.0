@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import ConversationBox from "./conversation-box";
 import { useConversation } from "../hooks/useConversation";
@@ -7,17 +7,28 @@ import clsx from "clsx";
 import { useQuery } from "@tanstack/react-query";
 import { getConversations } from "../actions/getConversations";
 import Loading from "./Loading";
+import toast from "react-hot-toast";
+import NoChatsEmptyState from "./NoChatsEmptyState";
+import ChatsErrorState from "./ChatsErrorState";
 
 
 function ConversationList() {
   const { conversationId, isOpen } = useConversation();
 
-  const {data,isFetching} = useQuery({
+  const {data,isFetching, isError,error, refetch} = useQuery({
     queryKey:["Conversations"],
     queryFn: getConversations,
     refetchOnWindowFocus:false,
+    retry:2,
   });
-
+  
+  useEffect(()=>{
+    if(!isFetching && isError){
+      toast.error(error.message || "Error occured while fetching chats!", {
+        id: "FETCH_CONVO_ERROR",
+      });
+    }
+  },[isError,error?.message,isFetching])
   return (
     <aside
       className={clsx(
@@ -29,15 +40,15 @@ function ConversationList() {
         }
       )}
     >
-      <div className="px-5">
-        <div className="flex justify-between mb-4 pt-4 ">
-          <div className="text-2xl font-semibold text-neutral-800 ">
-            Messages
-          </div>
-          <div className="cursor-pointer bg-gray-200 rounded-md p-2 hover:opacity-75 transition-colors ">
-            <MdOutlineGroupAdd size={20} />
-          </div>
+      <div className="flex justify-between mb-4 p-4 border-b border-b-neutral-200">
+        <div className="text-2xl font-semibold text-neutral-800 ">
+          Messages
         </div>
+        <div className="cursor-pointer bg-gray-200 rounded-md p-2 hover:opacity-75 transition-colors ">
+          <MdOutlineGroupAdd size={20} />
+        </div>
+      </div>
+      <div className="px-5">
 
         {data && data.map((item) => (
           <ConversationBox
@@ -48,6 +59,12 @@ function ConversationList() {
         ))}
         {
           isFetching && <Loading></Loading>
+        }
+        {
+          !isFetching && data && data.length<=1 && <NoChatsEmptyState/>
+        }
+        {
+          !isFetching && isError && <ChatsErrorState onRetry={()=>{refetch()}} />
         }
       </div>
     </aside>

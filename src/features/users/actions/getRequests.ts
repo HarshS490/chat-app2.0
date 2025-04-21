@@ -1,7 +1,7 @@
 "use server";
 import { API_URL } from "@/lib/apiEndPoints";
 import { auth } from "@/lib/authOptions";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { FullFriendRequest } from "../schema";
 
 
@@ -22,7 +22,9 @@ export const getRequests = async ()=>{
 
     return response.data.friendRequests as FullFriendRequest[];
   } catch (error) {
-    console.log(error);
-    return []
+    if(error instanceof AxiosError){
+      throw new Error(error.message);
+    }
+    throw new Error("Unexpected Error Ocurred"); 
   }
 }

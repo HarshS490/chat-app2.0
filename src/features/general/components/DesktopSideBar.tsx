@@ -24,7 +24,7 @@ function DesktopSideBar({currentuser}: Props) {
       <nav className='mt-4 flex flex-cl justify-between items-center '>
           <div className='cursor-pointer hover:opacity-75 transition'>
             <Avatar>
-              <AvatarImage src={currentuser?.image}/>
+              <AvatarImage src={currentuser?.image} alt='user-profile-pic'/>
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
           </div>

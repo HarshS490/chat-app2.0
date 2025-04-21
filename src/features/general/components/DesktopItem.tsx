@@ -28,10 +28,10 @@ function DesktopItem({ route }: Props) {
   };
   if (route.label === "Notifications") {
     return (
-      <div className="relative">
+      <li className="relative">
         <Sheet>
           <SheetTrigger>
-            <li
+            <div
               className={clsx(
                 "group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-semibold cursor-pointer ",
                 {
@@ -41,7 +41,7 @@ function DesktopItem({ route }: Props) {
               )}
             >
               <route.icon />
-            </li>
+            </div>
           </SheetTrigger>
           <SheetContent side="left" className="left-20 z-40 w-80">
             <SheetHeader>
@@ -50,7 +50,7 @@ function DesktopItem({ route }: Props) {
             <FriendRequests />
           </SheetContent>
         </Sheet>
-      </div>
+      </li>
     );
   }
 

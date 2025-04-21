@@ -11,7 +11,7 @@ type Props = {
   selected: boolean;
 };
 
-function ConversationBox({ data, selected }: Props) {
+const ConversationBox = React.memo(function ConversationBox({ data, selected }: Props) {
   const router = useRouter();
 
   const otherUser = useOtherUser(data);
@@ -85,6 +85,6 @@ function ConversationBox({ data, selected }: Props) {
       </div>
     </div>
   );
-}
+})
 
 export default ConversationBox;

@@ -1,9 +1,10 @@
 import { getConversationById } from "@/features/chats/actions/getConversationById";
-import Body from "@/features/chats/components/Body";
 import Header from "@/features/chats/components/Header";
 import MessageInput from "@/features/chats/components/MessageInput";
 import { PartialConversation } from "@/features/chats/schema";
-import React from "react";
+import React, { lazy } from "react";
+
+const Body = lazy(() => import("@/features/chats/components/Body"));
 
 type chatProps = {
   params: Promise<{ id: string }>;
