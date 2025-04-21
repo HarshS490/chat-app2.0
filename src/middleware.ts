@@ -9,7 +9,7 @@ export async function middleware(req: NextRequest) {
   console.log("Cookies in request:", cookies);
   const isAuth = !!token;
   const isAuthPage = req.nextUrl.pathname.startsWith("/auth");
-  console.log("User authenticated: ",isAuth," token: ",token);
+
   if (!isAuth && !isAuthPage) {
     return NextResponse.redirect(new URL("/auth", req.url));
   }
