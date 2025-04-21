@@ -11,24 +11,23 @@ import toast from "react-hot-toast";
 import NoChatsEmptyState from "./NoChatsEmptyState";
 import ChatsErrorState from "./ChatsErrorState";
 
-
 function ConversationList() {
   const { conversationId, isOpen } = useConversation();
 
-  const {data,isFetching, isError,error, refetch} = useQuery({
-    queryKey:["Conversations"],
+  const { data, isFetching, isError, error, refetch } = useQuery({
+    queryKey: ["Conversations"],
     queryFn: getConversations,
-    refetchOnWindowFocus:false,
-    retry:2,
+    refetchOnWindowFocus: false,
+    retry: 2,
   });
-  
-  useEffect(()=>{
-    if(!isFetching && isError){
+
+  useEffect(() => {
+    if (!isFetching && isError) {
       toast.error(error.message || "Error occured while fetching chats!", {
         id: "FETCH_CONVO_ERROR",
       });
     }
-  },[isError,error?.message,isFetching])
+  }, [isError, error?.message, isFetching]);
   return (
     <aside
       className={clsx(
@@ -41,31 +40,29 @@ function ConversationList() {
       )}
     >
       <div className="flex justify-between mb-4 p-4 border-b border-b-neutral-200">
-        <div className="text-2xl font-semibold text-neutral-800 ">
-          Messages
-        </div>
+        <div className="text-2xl font-semibold text-neutral-800 ">Messages</div>
         <div className="cursor-pointer bg-gray-200 rounded-md p-2 hover:opacity-75 transition-colors ">
           <MdOutlineGroupAdd size={20} />
         </div>
       </div>
       <div className="px-5">
-
-        {data && data.map((item) => (
-          <ConversationBox
-            key={item.conversationId}
-            data={item}
-            selected={conversationId === item.conversationId}
+        {data &&
+          data.map((item) => (
+            <ConversationBox
+              key={item.conversationId}
+              data={item}
+              selected={conversationId === item.conversationId}
+            />
+          ))}
+        {isFetching && <Loading></Loading>}
+        {!isFetching && data && data.length <= 1 && <NoChatsEmptyState />}
+        {!isFetching && isError && (
+          <ChatsErrorState
+            onRetry={() => {
+              refetch();
+            }}
           />
-        ))}
-        {
-          isFetching && <Loading></Loading>
-        }
-        {
-          !isFetching && data && data.length<=1 && <NoChatsEmptyState/>
-        }
-        {
-          !isFetching && isError && <ChatsErrorState onRetry={()=>{refetch()}} />
-        }
+        )}
       </div>
     </aside>
   );
