@@ -1,14 +1,11 @@
-export const dynamic = 'force-dynamic';
-import React from 'react'
-
+export const dynamic = "force-dynamic";
+import EmptyChatState from "@/features/chats/components/EmptyState";
+import React from "react";
 
 async function page() {
-  
-
-
-  return (
-    <div></div>
-  )
+  return <div className="hidden lg:block h-full">
+    <EmptyChatState />
+  </div>;
 }
 
-export default page
+export default page;

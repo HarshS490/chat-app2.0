@@ -10,7 +10,7 @@ type Props = {
 async function Sidebar({ children }: Props) {
   const currentuser = await getCurrentUser();
   return (
-    <div className="h-screen">
+    <div className="h-dvh">
       <DesktopSideBar currentuser={currentuser} />
       <main className="lg:pl-20 h-full">{children}</main>
       <MobileFooter />

@@ -23,13 +23,11 @@ async function chatroom({ params }: chatProps) {
   
 
   return (
-    <div className=" lg:pl-80 h-full">
       <div className="h-full flex flex-col py-2 gap-2 ">
         <Header data={conversation} />
         <Body chatId={chatId}/>
         <MessageInput chatId={chatId}></MessageInput>
       </div>
-    </div>
   );
 }
 

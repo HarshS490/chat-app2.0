@@ -13,7 +13,9 @@ async function layout({ children }: Props) {
       <div className="h-full">
         <SocketProvider>
           <ConversationList />
-          {children}
+          <div className="lg:pl-80 h-full">
+            {children}
+          </div>
         </SocketProvider>
       </div>
     </Sidebar>
