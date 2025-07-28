@@ -206,10 +206,6 @@ The following features are planned for future releases:
 
 - **Backend**: [PulseChat Backend](https://github.com/HarshS490/pulsechat-backend)
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Support
 
 For frontend-specific issues, please create an issue in this repository or contact the development team.
