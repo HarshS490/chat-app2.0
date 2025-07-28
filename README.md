@@ -204,7 +204,7 @@ The following features are planned for future releases:
 
 ## Related Repositories
 
-- **Backend**: [PulseChat Backend](https://github.com/yourusername/pulsechat-backend)
+- **Backend**: [PulseChat Backend](https://github.com/HarshS490/pulsechat-backend)
 
 ## License
 
