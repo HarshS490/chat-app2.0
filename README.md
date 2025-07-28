@@ -208,4 +208,4 @@ The following features are planned for future releases:
 
 ## Support
 
-For frontend-specific issues, please create an issue in this repository or contact the development team.
+For frontend-specific issues, please create an issue in this repository.
